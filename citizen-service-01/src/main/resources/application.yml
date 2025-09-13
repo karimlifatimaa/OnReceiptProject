@@ -1,0 +1,30 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /citizen-service
+
+spring:
+  application:
+    name: citizen-service-01
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/citizen_db
+    username: postgres
+    password: mypassword
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+    open-in-view: false
+
+  jackson:
+    time-zone: UTC
+    default-property-inclusion: NON_NULL
