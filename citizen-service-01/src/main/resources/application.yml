@@ -8,9 +8,9 @@ spring:
     name: citizen-service-01
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/citizen_db
-    username: postgres
-    password: mypassword
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:

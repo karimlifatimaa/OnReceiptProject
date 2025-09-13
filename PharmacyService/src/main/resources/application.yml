@@ -6,9 +6,9 @@ spring:
     name: pharmacy-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/pharmacy_db
-    username: postgres
-    password: 12345
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
 
