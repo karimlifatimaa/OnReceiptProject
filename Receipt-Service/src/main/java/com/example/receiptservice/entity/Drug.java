@@ -1,47 +1,45 @@
 package com.example.receiptservice.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.annotations.UuidGenerator;
-
-import java.time.Instant;
 import java.util.UUID;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "drugs")
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class Drug {
 
     @Id
-    @UuidGenerator
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private UUID id;
 
-    @Column(name = "trade_name", nullable = false, length = 255)
+    @Column(name = "trade_name", nullable = false)
     private String tradeName;
 
-    @Column(name = "is_controlled_substance", nullable = false)
+    @Column(name = "is_controlled_substance", columnDefinition = "boolean default false")
+    private boolean isControlledSubstance = false;
 
-    private Boolean isControlledSubstance = false;
-
-    @Column(name = "requires_prescription", nullable = false)
-    private Boolean requiresPrescription = true;
+    @Column(name = "requires_prescription", columnDefinition = "boolean default true")
+    private boolean requiresPrescription = true;
 
     @Column(name = "is_active", nullable = false)
-    private Boolean isActive = true;
+    private boolean isActive = true;
 
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
+    @Column(name = "created_at", nullable = false)
+    private OffsetDateTime createdAt;
 
-    @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
-    private Instant updatedAt;
+    private OffsetDateTime updatedAt;
 
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = OffsetDateTime.now();
+        this.updatedAt = OffsetDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = OffsetDateTime.now();
+    }
 }

@@ -1,68 +1,58 @@
 package com.example.receiptservice.controller;
 
-import com.example.receiptservice.dto.DrugCreateDto;
-import com.example.receiptservice.dto.DrugDto;
-import com.example.receiptservice.dto.DrugUpdateDto;
+import com.example.receiptservice.dto.drug.DrugCreateDto;
+import com.example.receiptservice.dto.drug.DrugResponseDto;
+import com.example.receiptservice.dto.drug.DrugUpdateDto;
 import com.example.receiptservice.service.DrugService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.UUID;
-import java.util.UUID;
-import java.util.UUID;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/drugs")
+@RequiredArgsConstructor
+@Slf4j
 public class DrugController {
 
     private final DrugService drugService;
 
-    public DrugController(DrugService drugService) {
-        this.drugService = drugService;
-    }
-
     @PostMapping
-    public ResponseEntity<DrugDto> createDrug(@Valid @RequestBody DrugCreateDto drugCreateDto) {
-        log.info("createDrug request received: {}", drugCreateDto);
-        DrugDto createdDrug = drugService.createDrug(drugCreateDto);
-        log.info("createDrug response: {}", createdDrug);
+    public ResponseEntity<DrugResponseDto> createDrug(@Valid @RequestBody DrugCreateDto drugCreateDto) {
+        log.info("API call to create a new drug with name: {}", drugCreateDto.getTradeName());
+        DrugResponseDto createdDrug = drugService.createDrug(drugCreateDto);
         return new ResponseEntity<>(createdDrug, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DrugDto> getDrugById(@PathVariable UUID id) {
-        log.info("getDrugById request received for id: {}", id);
-        DrugDto drugDto = drugService.getDrugById(id);
-        log.info("getDrugById response: {}", drugDto);
-        return ResponseEntity.ok(drugDto);
+    public ResponseEntity<DrugResponseDto> getDrugById(@PathVariable UUID id) {
+        log.info("API call to get drug with ID: {}", id);
+        DrugResponseDto drug = drugService.getDrugById(id);
+        return ResponseEntity.ok(drug);
     }
 
     @GetMapping
-    public ResponseEntity<List<DrugDto>> getAllDrugs() {
-        log.info("getAllDrugs request received");
-        List<DrugDto> drugs = drugService.getAllDrugs();
-        log.info("getAllDrugs response size: {}", drugs.size());
+    public ResponseEntity<List<DrugResponseDto>> getAllDrugs() {
+        log.info("API call to get all drugs.");
+        List<DrugResponseDto> drugs = drugService.getAllDrugs();
         return ResponseEntity.ok(drugs);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DrugDto> updateDrug(@PathVariable UUID id, @Valid @RequestBody DrugUpdateDto drugUpdateDto) {
-        log.info("updateDrug request received for id: {}: {}", id, drugUpdateDto);
-        DrugDto updatedDrug = drugService.updateDrug(id, drugUpdateDto);
-        log.info("updateDrug response: {}", updatedDrug);
+    public ResponseEntity<DrugResponseDto> updateDrug(@PathVariable UUID id, @Valid @RequestBody DrugUpdateDto drugUpdateDto) {
+        log.info("API call to update drug with ID: {}", id);
+        DrugResponseDto updatedDrug = drugService.updateDrug(id, drugUpdateDto);
         return ResponseEntity.ok(updatedDrug);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDrug(@PathVariable UUID id) {
-        log.info("deleteDrug request received for id: {}", id);
+        log.info("API call to delete drug with ID: {}", id);
         drugService.deleteDrug(id);
-        log.info("deleteDrug successful for id: {}", id);
         return ResponseEntity.noContent().build();
     }
 }
