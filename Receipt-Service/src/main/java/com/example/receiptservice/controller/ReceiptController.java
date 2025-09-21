@@ -1,13 +1,17 @@
 package com.example.receiptservice.controller;
 
-import com.example.receiptservice.dto.*;
+import com.example.receiptservice.dto.receipt.ReceiptCreateDto;
+import com.example.receiptservice.dto.receipt.ReceiptResponseDto;
+import com.example.receiptservice.dto.receipt.ReceiptUpdateDto;
 import com.example.receiptservice.service.ReceiptService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/receipts")
@@ -18,40 +22,37 @@ public class ReceiptController {
     private final ReceiptService receiptService;
 
     @PostMapping
-    public ResponseEntity<ReceiptDto> createReceipt(@RequestBody ReceiptCreateDto receiptCreateDto) {
-        log.info("API request to create receipt: {}", receiptCreateDto);
-        ReceiptDto createdReceipt = receiptService.createReceipt(receiptCreateDto);
-        return ResponseEntity.ok(createdReceipt);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<ReceiptDto>> getAllReceipts() {
-        log.info("API request to fetch all receipts");
-        List<ReceiptDto> receipts = receiptService.getAllReceipts();
-        return ResponseEntity.ok(receipts);
+    public ResponseEntity<ReceiptResponseDto> createReceipt(@Valid @RequestBody ReceiptCreateDto receiptCreateDto) {
+        log.info("API call to create a new receipt with serial number: {}", receiptCreateDto.getSerialNumber());
+        ReceiptResponseDto createdReceipt = receiptService.createReceipt(receiptCreateDto);
+        return new ResponseEntity<>(createdReceipt, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReceiptDto> getReceiptById(@PathVariable Long id) {
-        log.info("API request to fetch receipt with id: {}", id);
-        ReceiptDto receipt = receiptService.getReceiptById(id);
+    public ResponseEntity<ReceiptResponseDto> getReceiptById(@PathVariable UUID id) {
+        log.info("API call to get receipt with ID: {}", id);
+        ReceiptResponseDto receipt = receiptService.getReceiptById(id);
         return ResponseEntity.ok(receipt);
     }
 
+    @GetMapping
+    public ResponseEntity<List<ReceiptResponseDto>> getAllReceipts() {
+        log.info("API call to get all receipts.");
+        List<ReceiptResponseDto> receipts = receiptService.getAllReceipts();
+        return ResponseEntity.ok(receipts);
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<ReceiptDto> updateReceipt(
-            @PathVariable Long id,
-            @RequestBody ReceiptUpdateDto receiptUpdateDto) {
-        log.info("API request to update receipt with id: {} data: {}", id, receiptUpdateDto);
-        ReceiptDto updatedReceipt = receiptService.updateReceipt(id, receiptUpdateDto);
+    public ResponseEntity<ReceiptResponseDto> updateReceipt(@PathVariable UUID id, @Valid @RequestBody ReceiptUpdateDto receiptUpdateDto) {
+        log.info("API call to update receipt with ID: {}", id);
+        ReceiptResponseDto updatedReceipt = receiptService.updateReceipt(id, receiptUpdateDto);
         return ResponseEntity.ok(updatedReceipt);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReceipt(@PathVariable Long id) {
-        log.info("API request to delete receipt with id: {}", id);
+    public ResponseEntity<Void> deleteReceipt(@PathVariable UUID id) {
+        log.info("API call to delete receipt with ID: {}", id);
         receiptService.deleteReceipt(id);
         return ResponseEntity.noContent().build();
     }
-
 }

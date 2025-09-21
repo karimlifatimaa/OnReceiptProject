@@ -1,28 +1,23 @@
-package com.example.receiptservice.dto;
+package com.example.receiptservice.dto.receiptItem;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.util.UUID;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class ReceiptItemCreateDto {
-    @NotNull(message = "Receipt ID cannot be null")
-    private Long receiptId;
-
-    @NotNull(message = "Drug ID cannot be null")
+public class ReceiptItemUpdateDto {
+    private UUID id; // Yenilənmə zamanı ID ötürülə bilər.
+    @NotNull(message = "Drug ID is required")
     private UUID drugId;
 
     @NotBlank(message = "Dosage cannot be blank")
+    @Size(max = 255, message = "Dosage must be less than 255 characters")
     private String dosage;
 
-    @NotNull(message = "Quantity cannot be null")
+    @NotNull(message = "Quantity is required")
     @Min(value = 1, message = "Quantity must be at least 1")
     private Integer quantity;
 
