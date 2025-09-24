@@ -5,9 +5,9 @@
       <profile name="Gradle Imported" enabled="true">
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.32/17d46b3e205515e1e8efd3ee4d57ce8018914163/lombok-1.18.32.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.40/398c6d2d7c42c96b65e78d2ddc9be0058c163453/lombok-1.18.40.jar" />
         </processorPath>
-        <module name="ms-doctor.main" />
+        <module name="UserService.main" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -26,6 +26,9 @@
       <module name="ReceiptService" options="-parameters" />
       <module name="ReceiptService.main" options="-parameters" />
       <module name="ReceiptService.test" options="-parameters" />
+      <module name="UserService" options="-parameters" />
+      <module name="UserService.main" options="-parameters" />
+      <module name="UserService.test" options="-parameters" />
       <module name="citizen-service-01" options="-parameters" />
       <module name="citizen-service-01.main" options="-parameters" />
       <module name="citizen-service-01.test" options="-parameters" />
