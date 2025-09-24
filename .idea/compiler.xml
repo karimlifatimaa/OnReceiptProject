@@ -10,5 +10,28 @@
         <module name="ms-doctor.main" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="OnReceiptProject" target="17" />
+      <module name="OnReceiptProject.main" target="17" />
+      <module name="OnReceiptProject.test" target="17" />
+      <module name="Receipt-Service.main" target="17" />
+      <module name="Receipt-Service.test" target="17" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="PharmacyService" options="-parameters" />
+      <module name="PharmacyService.main" options="-parameters" />
+      <module name="PharmacyService.test" options="-parameters" />
+      <module name="ReceiptService" options="-parameters" />
+      <module name="ReceiptService.main" options="-parameters" />
+      <module name="ReceiptService.test" options="-parameters" />
+      <module name="citizen-service-01" options="-parameters" />
+      <module name="citizen-service-01.main" options="-parameters" />
+      <module name="citizen-service-01.test" options="-parameters" />
+      <module name="ms-doctor" options="-parameters" />
+      <module name="ms-doctor.main" options="-parameters" />
+      <module name="ms-doctor.test" options="-parameters" />
+    </option>
   </component>
 </project>

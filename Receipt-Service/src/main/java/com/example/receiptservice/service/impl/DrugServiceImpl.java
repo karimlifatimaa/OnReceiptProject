@@ -1,14 +1,18 @@
 package com.example.receiptservice.service.impl;
 
-import com.example.receiptservice.dto.DrugCreateDto;
-import com.example.receiptservice.dto.DrugDto;
-import com.example.receiptservice.dto.DrugUpdateDto;
+import com.example.receiptservice.dto.drug.DrugCreateDto;
+import com.example.receiptservice.dto.drug.DrugResponseDto;
+import com.example.receiptservice.dto.drug.DrugUpdateDto;
 import com.example.receiptservice.entity.Drug;
+import com.example.receiptservice.exception.BusinessException;
+import com.example.receiptservice.exception.ErrorCode;
+import com.example.receiptservice.mapper.DrugMapper;
 import com.example.receiptservice.repository.DrugRepository;
 import com.example.receiptservice.service.DrugService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,81 +24,65 @@ import java.util.stream.Collectors;
 public class DrugServiceImpl implements DrugService {
 
     private final DrugRepository drugRepository;
+    private final DrugMapper drugMapper;
 
     @Override
-    public DrugDto createDrug(DrugCreateDto drugCreateDto) {
-        log.info("Creating drug with details: {}", drugCreateDto);
-        Drug drug = new Drug();
-        drug.setTradeName(drugCreateDto.getTradeName());
-        drug.setIsControlledSubstance(drugCreateDto.getIsControlledSubstance());
-        drug.setRequiresPrescription(drugCreateDto.getRequiresPrescription());
-        drug.setIsActive(true);
+    @Transactional
+    public DrugResponseDto createDrug(DrugCreateDto drugCreateDto) {
+        log.info("Creating new drug with trade name: {}", drugCreateDto.getTradeName());
+        Drug drug = drugMapper.toEntity(drugCreateDto);
         Drug savedDrug = drugRepository.save(drug);
-        log.info("Saved drug with id: {}", savedDrug.getId());
-        return convertToDto(savedDrug);
+        log.info("Successfully created drug with ID: {}", savedDrug.getId());
+        return drugMapper.toDto(savedDrug);
     }
 
     @Override
-    public DrugDto getDrugById(UUID id) {
-        log.info("Fetching drug with id: {}", id);
+    public DrugResponseDto getDrugById(UUID id) {
+        log.info("Fetching drug with ID: {}", id);
         Drug drug = drugRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Drug not found with id: " + id));
-        log.info("Found drug: {}", drug);
-        return convertToDto(drug);
+                .orElseThrow(() -> {
+                    log.warn("Attempted to fetch non-existent drug with ID: {}", id);
+                    return new BusinessException(ErrorCode.DRUG_NOT_FOUND);
+                });
+        log.info("Successfully fetched drug with ID: {}", id);
+        return drugMapper.toDto(drug);
     }
 
     @Override
-    public List<DrugDto> getAllDrugs() {
-        log.info("Fetching all drugs");
-        List<Drug> drugs = drugRepository.findAll();
-        log.info("Found {} drugs", drugs.size());
-        return drugs.stream()
-                .map(this::convertToDto)
+    public List<DrugResponseDto> getAllDrugs() {
+        log.info("Fetching all drugs.");
+        List<DrugResponseDto> drugs = drugRepository.findAll().stream()
+                .map(drugMapper::toDto)
                 .collect(Collectors.toList());
+        log.info("Successfully fetched {} drugs.", drugs.size());
+        return drugs;
     }
 
     @Override
-    public DrugDto updateDrug(UUID id, DrugUpdateDto drugUpdateDto) {
-        log.info("Updating drug with id: {} and details: {}", id, drugUpdateDto);
+    @Transactional
+    public DrugResponseDto updateDrug(UUID id, DrugUpdateDto drugUpdateDto) {
+        log.info("Updating drug with ID: {}", id);
         Drug drug = drugRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Drug not found with id: " + id));
+                .orElseThrow(() -> {
+                    log.warn("Attempted to update non-existent drug with ID: {}", id);
+                    return new BusinessException(ErrorCode.DRUG_NOT_FOUND);
+                });
 
-        if (drugUpdateDto.getTradeName() != null) {
-            drug.setTradeName(drugUpdateDto.getTradeName());
-        }
-        if (drugUpdateDto.getIsControlledSubstance() != null) {
-            drug.setIsControlledSubstance(drugUpdateDto.getIsControlledSubstance());
-        }
-        if (drugUpdateDto.getRequiresPrescription() != null) {
-            drug.setRequiresPrescription(drugUpdateDto.getRequiresPrescription());
-        }
-        if (drugUpdateDto.getIsActive() != null) {
-            drug.setIsActive(drugUpdateDto.getIsActive());
-        }
-
+        drugMapper.updateEntityFromDto(drugUpdateDto, drug);
         Drug updatedDrug = drugRepository.save(drug);
-        log.info("Updated drug with id: {}", updatedDrug.getId());
-        return convertToDto(updatedDrug);
+        log.info("Successfully updated drug with ID: {}", updatedDrug.getId());
+        return drugMapper.toDto(updatedDrug);
     }
 
     @Override
+    @Transactional
     public void deleteDrug(UUID id) {
-        log.info("Deleting drug with id: {}", id);
-        Drug drug = drugRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Drug not found with id: " + id));
-        drugRepository.delete(drug);
-        log.info("Deleted drug with id: {}", id);
-    }
-
-    private DrugDto convertToDto(Drug drug) {
-        DrugDto drugDto = new DrugDto();
-        drugDto.setId(drug.getId());
-        drugDto.setTradeName(drug.getTradeName());
-        drugDto.setIsControlledSubstance(drug.getIsControlledSubstance());
-        drugDto.setRequiresPrescription(drug.getRequiresPrescription());
-        drugDto.setIsActive(drug.getIsActive());
-        drugDto.setCreatedAt(drug.getCreatedAt());
-        drugDto.setUpdatedAt(drug.getUpdatedAt());
-        return drugDto;
+        log.info("Deleting drug with ID: {}", id);
+        if (!drugRepository.existsById(id)) {
+            log.warn("Attempted to delete non-existent drug with ID: {}", id);
+            throw new BusinessException(ErrorCode.DRUG_NOT_FOUND);
+        }
+        drugRepository.deleteById(id);
+        log.info("Successfully deleted drug with ID: {}", id);
     }
 }

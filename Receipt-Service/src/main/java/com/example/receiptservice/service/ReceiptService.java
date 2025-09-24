@@ -1,15 +1,16 @@
 package com.example.receiptservice.service;
 
-import com.example.receiptservice.dto.ReceiptCreateDto;
-import com.example.receiptservice.dto.ReceiptDto;
-import com.example.receiptservice.dto.ReceiptUpdateDto;
+import com.example.receiptservice.dto.receipt.ReceiptCreateDto;
+import com.example.receiptservice.dto.receipt.ReceiptResponseDto;
+import com.example.receiptservice.dto.receipt.ReceiptUpdateDto;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface ReceiptService {
-    ReceiptDto createReceipt(ReceiptCreateDto receiptCreateDto);
-    ReceiptDto getReceiptById(Long id);
-    List<ReceiptDto> getAllReceipts();
-    ReceiptDto updateReceipt(Long id, ReceiptUpdateDto receiptUpdateDto);
-    void deleteReceipt(Long id);
+    ReceiptResponseDto createReceipt(ReceiptCreateDto receiptCreateDto);
+    ReceiptResponseDto getReceiptById(UUID id);
+    List<ReceiptResponseDto> getAllReceipts();
+    ReceiptResponseDto updateReceipt(UUID id, ReceiptUpdateDto receiptUpdateDto);
+    void deleteReceipt(UUID id);
 }
