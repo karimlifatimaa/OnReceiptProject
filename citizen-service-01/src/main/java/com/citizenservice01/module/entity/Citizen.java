@@ -58,7 +58,7 @@ public class Citizen {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "gender")
-    private Gender gender = Gender.UNKNOWN;
+    private Gender gender = Gender.OTHER;
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "contact_info", columnDefinition = "jsonb")
